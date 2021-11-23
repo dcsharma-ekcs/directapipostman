@@ -1,0 +1,1056 @@
+{
+	"info": {
+		"_postman_id": "762d20c8-1e37-4504-ba53-d3ee220414cf",
+		"name": "Direct API  Validations VNEX-1813 Initiate Transaction",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Access token",
+			"item": [
+				{
+					"name": "get Access token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"refreshToken\", pm.response.json().refreshToken)\r",
+									"console.log(pm.environment.get(\"refreshToken\"))\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"adUserName\":\"test_user_ashwini\",\r\n    \"adUserSecret\":\"P2,W2cmq15-#b1+\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/accessToken",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"accessToken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get Refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", pm.response.json().accessToken);\r",
+									"pm.environment.set(\"refreshToken\", pm.response.json().refreshToken)\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\":\"{{refreshToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/refreshToken",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"refreshToken"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Initiate Transaction Validations",
+			"item": [
+				{
+					"name": "ipV6Address:\"\"/  ipV4Address:null",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test ipV6Address value empty and ipV4Addresvalue= null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": \"\",\r\n    \"ipV4Address\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV6Address:null/  ipV4Address:\"\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test ipV6Address value null and ipV4Addresvalue value empty\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": null,\r\n    \"ipV4Address\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV6Address: null/ ipV4Address: null",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test ipV6Address value null and ipV4Addresvalue= null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": null,\r\n    \"ipV4Address\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV6Address: \"\"/ ipV4Address: \"\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test ipV6Address value empty and ipV4Addresvalue= empty\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": \"\",\r\n    \"ipV4Address\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV4Address: \"\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test ipV6Address value empty and ipV4Addresvalue no field\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address1\": \"\",\r\n    \"ipV4Address\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV6Address:\"\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test ipV6Address value no field and ipV4Addresvalue empty\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": \"\",\r\n    \"ipV4Address1\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV6Address:\"value\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"transactionIdenv\",pm.response.json().data.transactionId)\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response json body have transactionId\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": \"2001:0db8:85a3:0000:0000:8a2e:0370:7334\",\r\n    \"ipV4Address1\": \"110.225.87.121\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV4Address:\"value\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"transactionIdenv\",pm.response.json().data.transactionId)\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response json body have transactionId\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address1\": \"2001:0db8:85a3:0000:0000:8a2e:0370:7334\",\r\n    \"ipV4Address\": \"110.225.87.121\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV6Address:\"value\" / ipV4Address:\"value\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"transactionIdenv\",pm.response.json().data.transactionId)\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response json body have transactionId\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": \"2001:0db8:85a3:0000:0000:8a2e:0370:7334\",\r\n    \"ipV4Address\": \"110.225.87.121\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV6Address:null / ipV4Address:\"value\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"transactionIdenv\",pm.response.json().data.transactionId)\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response json body have transactionId\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": null,\r\n    \"ipV4Address\": \"110.225.87.121\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ipV6Address:\"value\" / ipV4Address: null",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"transactionIdenv\",pm.response.json().data.transactionId)\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response json body have transactionId\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": \"2001:0db8:85a3:0000:0000:8a2e:0370:7334\",\r\n    \"ipV4Address\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No:ipV6Address  / No: ipV4Address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Test ipV6Address no field and ipV4Addresvalue no field\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    //console.log(jsonData.childErrors[0].errorMessage)\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"IPv4 or IPv6 should be present.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address1\": \"2001:0db8:85a3:0000:0000:8a2e:0370:7334\",\r\n    \"ipV4Address1\": \"110.225.87.121\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "transactionId",
+			"value": "10000000000001"
+		},
+		{
+			"key": "transactionIdenv",
+			"value": "10000000000001"
+		},
+		{
+			"key": "orderNumber",
+			"value": "10350"
+		},
+		{
+			"key": "currencyCode",
+			"value": "EUR"
+		}
+	]
+}
