@@ -1,0 +1,3454 @@
+{
+	"info": {
+		"_postman_id": "3627f2fb-3411-4074-bfd5-48c659b37ddb",
+		"name": "Direct API  Validations VNEX-1813 Transaction Event",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Access token",
+			"item": [
+				{
+					"name": "get Access token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"refreshToken\", pm.response.json().refreshToken)\r",
+									"console.log(pm.environment.get(\"refreshToken\"))\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\":\"dct_api_user_int\",\r\n    \"secretKey\":\"\\\"!I09&lS25-S8y7\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/accessToken",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"accessToken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get Refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", pm.response.json().accessToken);\r",
+									"pm.environment.set(\"refreshToken\", pm.response.json().refreshToken)\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\":\"{{refreshToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/refreshToken",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"refreshToken"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Initiate Transaction",
+			"item": [
+				{
+					"name": "Initiate Transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response json body have transactionId\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"    pm.collectionVariables.set(\"transactionIdenv\",pm.response.json().data.transactionId)\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenENV}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "LocaleCode",
+								"value": "es",
+								"type": "text"
+							},
+							{
+								"key": "azureADUserId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "clientId",
+								"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ipV6Address\": \"2001:0db8:85a3:0000:0000:8a2e:0370:7334\",\r\n    \"ipV4Address\": \"110.225.87.121\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/initiate",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transaction Event  Validations",
+			"item": [
+				{
+					"name": "No EventType",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test EventType missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"EventType is missing or incorrect.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType1\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EventType \"\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test EventType empty\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"EventType is missing or incorrect.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EventType null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test EventType null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"EventType is missing or incorrect.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No Amount field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test Amount field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"Amount is missing.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount1\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No Amount:amount field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Amount:amount field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"amount is missing or incorrect in Amount field.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount1\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amount:amount Null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Amount:amount value Null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"amount is missing or incorrect in Amount field.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": null,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amount:amount 0",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('complete transation', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Amount:amount Value 0\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 0,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amount:amount \"String Value\" : fail",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Amount:amount field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"   // pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"currencyCode is missing or incorrect in Amount field.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": \"x\",\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amount:amount  -1",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": -1.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No Amount:currencyCode field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test currencyCode field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"currencyCode is missing or incorrect in Amount field.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode1\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amount:currencyCode Wrong",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test currencyCode field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ NO currencyCode\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 2,\r\n    \"Amount\": {\r\n        \"amount\": 5.00,\r\n        \"currencyCode\": \"XXX\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amount:currencyCode \"\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test currencyCode value empty\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"currencyCode is missing or incorrect in Amount field.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.00,\r\n        \"currencyCode\": \"\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amount:currencyCode null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test currencyCode Null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"currencyCode is missing or incorrect in Amount field.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.00,\r\n        \"currencyCode\": null\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No Discount field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('complete transation', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"Test No Discount field\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount1\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No Discount:amount field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Discount:amount field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"amount is missing or incorrect in discount field.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount1\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No Discount:currencyCode field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Discount:currency field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    pm.expect(jsonData.childErrors[0].errorMessage).to.eql(\"currency Code is missing or incorrect in discount field.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode1\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No Quantity field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Quantity field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity1\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quantity -1",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Quantity Negative if Event Type is Add\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": -4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quantity 0",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Quantity zero if Event Type is Add\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 0,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quantity Null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Quantity Null if Event Type is Add\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": null,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quantity \"String Value\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test Quantity String Value\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": \"x\",\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No ProductCode field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test  ProductCode is missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"/*\r",
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductCode is missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});*/\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode1\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ProductCode Null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test  ProductCode null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"/*pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductCode null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});*/\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": null,\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ProductCode Number",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductCode is Numeric \", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": 9878,\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No ProductDescription field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductDescription field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"/*\r",
+									"pm.test(\"Test ProductDescription field missing \", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription1\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ProductDescription \"\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductDescription value blanck\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"/*\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductDescription value blanck\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ProductDescription null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductDescription value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"\r",
+									"/*\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductDescription value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": null,\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No UniqueCartId field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test UniqueCartId field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"/*\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test UniqueCartId field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId1\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UniqueCartId null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test UniqueCartId value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"\r",
+									"/*\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test UniqueCartId value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": null,\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UniqueCartId \"\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test UniqueCartId value blank\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"/*\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test UniqueCartId value blank\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No TransactionId field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test TransactionId value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"/*\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test TransactionId field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TransactionId null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test TransactionId value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"/*\r",
+									"\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test TransactionId value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"TransactionId1\": null,\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TransactionId \"\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test TransactionId value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"/*\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test TransactionId value blanck\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"TransactionId\": \"\",\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No ProductType field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductType field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType1\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ProductType null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductType value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType1\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\":null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ProductType  \"\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test ProductType value balnk\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType1\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": false,\r\n    \"EventType\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No GiftCard field",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test GiftCard field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"     pm.expect(pm.response.text()).to.include(\"transactionId\");\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"/*\r",
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test GiftCard field missing\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});\r",
+									"*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard1\": false,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GiftCard null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test GiftCard value null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": null,\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GiftCard \"\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Test GiftCard value blanck\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(\"Validation failure\");\r",
+									"    \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccountId",
+								"value": "{{customerId}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UniqueCartId\": \"AIV90687S980SV\",\r\n    \"ProductCode\": \"ASD121Z2\",\r\n    \"ProductDescription\": \"Product XZ2\",\r\n    \"ProductType\": \"Virtual\",\r\n    \"Quantity\": 4,\r\n    \"Amount\": {\r\n        \"amount\": 5.05,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"Discount\": {\r\n        \"amount\": 0.00,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"GiftCard\": \"\",\r\n    \"EventType\":\"add\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/transactions/{{transactionIdenv}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"transactions",
+								"{{transactionIdenv}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "transactionId",
+			"value": "10000000000001"
+		},
+		{
+			"key": "transactionIdenv",
+			"value": "10000000000001"
+		},
+		{
+			"key": "orderNumber",
+			"value": "10350"
+		},
+		{
+			"key": "currencyCode",
+			"value": "EUR"
+		}
+	]
+}
