@@ -9,7 +9,7 @@
 			"name": "Access token",
 			"item": [
 				{
-					"name": "get Access token",
+					"name": "get Access token api",
 					"event": [
 						{
 							"listen": "test",
