@@ -1,0 +1,292 @@
+{
+	"info": {
+		"_postman_id": "cdc2acf6-7075-4665-aecf-410adbb97248",
+		"name": "Shopify add to card transaction",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get access token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set('token', pm.response.json().access_token);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "e3d91430-3202-4bdf-801a-5a661c5df3de",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "5PA7Q~X53luGnTDSK3AvpWNQsxupFXLLd.Rwb",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "https://vestaintuse2b2c.onmicrosoft.com/e3d91430-3202-4bdf-801a-5a661c5df3de/.default",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.microsoftonline.com/vestaintuse2b2c.onmicrosoft.com/oauth2/v2.0/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						"vestaintuse2b2c.onmicrosoft.com",
+						"oauth2",
+						"v2.0",
+						"token"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "b3412c65-b94e-4cb9-9e37-b899aaedd5dc",
+							"disabled": true
+						},
+						{
+							"key": "client_secret",
+							"value": "AOK.ETy6N2v6wm-b5b0Ry-6gnr.9-fa.xs",
+							"disabled": true
+						},
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"disabled": true
+						},
+						{
+							"key": "scope",
+							"value": "https://vNextCustom.onmicrosoft.com/b3412c65-b94e-4cb9-9e37-b899aaedd5dc/.default",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "initiate transaction",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.environment.get('domain'))\r",
+							"console.log(pm.environment.get('customerId'))\r",
+							"console.log(pm.environment.get('token'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('initiate transaction for first customer', function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"\r",
+							"pm.test(\"get transactionID\", function() {\r",
+							"    pm.environment.set(\"transactionId\", pm.response.json().transactionId)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AccountId",
+						"value": "{{customerId}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es-ES,q=0.9,en;q=0.8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"processingState\" : \"Real\",\r\n    \"transactionId\": \"\",\r\n    \"customerTransactionId\": \"3852234211111\",\r\n    \"transactionMode\": \"RealTime\",\r\n    \"customerId\": 4,\r\n    \"customerName\": \"testint14decs3.myshopify.com\",\r\n    \"integrationType\": \"Shopify\",\r\n    \"additionalDetails\": {\r\n        \"transactionStarted\": \"Yes\"\r\n    },\r\n    \"createdOn\": \"2021-06-16 09:25:32.607\",\r\n    \"eventRequest\": {\r\n        \"eventName\": \"Cart\",\r\n        \"eventType\": \"Create\",\r\n        \"eventCreatedOn\": \"2021-06-16 09:25:32.607\",\r\n        \"eventReceivedOn\": \"2021-06-16 09:25:32.607\",\r\n        \"rawPayload\": {\r\n            \"topic\": \"CARTS_CREATE\",\r\n            \"domain\": \"testint24s1.myshopify.com\",\r\n            \"payload\": {\r\n                \"id\": \"156616f2dbc45c9b76a14d37883d0SSS\",\r\n                \"token\": \"AABBBCCC333\",\r\n                \"line_items\": [\r\n                    {\r\n                        \"id\": 40034370486455,\r\n                        \"properties\": null,\r\n                        \"quantity\": 1,\r\n                        \"variant_id\": 40034370486455,\r\n                        \"key\": \"40034370486455:0a50b9d45c56995f11a1b1f11affad23\",\r\n                        \"discounted_price\": \"49.00\",\r\n                        \"discounts\": [],\r\n                        \"gift_card\": false,\r\n                        \"grams\": 431,\r\n                        \"line_price\": \"49.00\",\r\n                        \"original_line_price\": \"49.00\",\r\n                        \"original_price\": \"49.00\",\r\n                        \"price\": \"49.00\",\r\n                        \"product_id\": 6821253546167,\r\n                        \"sku\": \"\",\r\n                        \"taxable\": true,\r\n                        \"title\": \"Chequered Red Shirt - medium\",\r\n                        \"total_discount\": \"0.00\",\r\n                        \"vendor\": \"Liam Fashions\",\r\n                        \"discounted_price_set\": {\r\n                            \"shop_money\": {\r\n                                \"amount\": \"49.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            },\r\n                            \"presentment_money\": {\r\n                                \"amount\": \"49.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            }\r\n                        },\r\n                        \"line_price_set\": {\r\n                            \"shop_money\": {\r\n                                \"amount\": \"49.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            },\r\n                            \"presentment_money\": {\r\n                                \"amount\": \"49.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            }\r\n                        },\r\n                        \"original_line_price_set\": {\r\n                            \"shop_money\": {\r\n                                \"amount\": \"49.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            },\r\n                            \"presentment_money\": {\r\n                                \"amount\": \"49.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            }\r\n                        },\r\n                        \"price_set\": {\r\n                            \"shop_money\": {\r\n                                \"amount\": \"49.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            },\r\n                            \"presentment_money\": {\r\n                                \"amount\": \"49.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            }\r\n                        },\r\n                        \"total_discount_set\": {\r\n                            \"shop_money\": {\r\n                                \"amount\": \"0.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            },\r\n                            \"presentment_money\": {\r\n                                \"amount\": \"0.0\",\r\n                                \"currency_code\": \"USD\"\r\n                            }\r\n                        }\r\n                    }\r\n                ],\r\n                \"note\": null,\r\n                \"updated_at\": \"2021-06-16T09:25:29.312Z\",\r\n                \"created_at\": \"2021-06-16T09:25:29.312Z\"\r\n            }\r\n        }\r\n    },\r\n    \"modifiedOn\": null,\r\n    \"transactionZoneOffset\": \"+05:00\",\r\n    \"consumerDevice\": {\r\n        \"ipV6Address\": null,\r\n        \"ipV4Address\": \"10.0.0.2\",\r\n        \"acceptLanguage\": \"\",\r\n        \"userAgent\": \"web\",\r\n        \"sessionHash\": \"\",\r\n        \"browserWidth\": 0,\r\n        \"browserHeight\": 0\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/api/transactions/initiate",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"transactions",
+						"initiate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add to cart data",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"note\": null,\r\n    \"orderDetails\": [],\r\n    \"processingState\": \"Real\",\r\n    \"transactionId\": \"32348160786650\",\r\n    \"customerTransactionId\": \"32348160786650\",\r\n    \"customerId\": 4,\r\n    \"customerName\": \"testint14decs3.myshopify.com\",\r\n    \"customerType\": \"Shopify\",\r\n    \"integrationType\": \"Shopify\",\r\n    \"transactionMode\": \"RealTime\",\r\n    \"additionalDetails\": {},\r\n    \"eventRequest\": {\r\n        \"eventName\": \"Checkout\",\r\n        \"eventType\": \"Create\",\r\n        \"eventCreatedOn\": \"2021-12-16 10:45:52.893\",\r\n        \"eventReceivedOn\": \"2021-12-16 10:45:52.893\",\r\n        \"rawPayload\": {\r\n            \"topic\": \"CHECKOUTS_CREATE\",\r\n            \"domain\": \"testint15decs1.myshopify.com\",\r\n            \"payload\": {\r\n                \"id\": 32348160786650,\r\n                \"token\": \"1b110daef70e20bed9c10e620c37ae8d\",\r\n                \"cart_token\": \"19447faa790ef0f24a633efe34c4b9a6\",\r\n                \"email\": null,\r\n                \"gateway\": null,\r\n                \"buyer_accepts_marketing\": false,\r\n                \"created_at\": \"2021-12-16T16:15:50+05:30\",\r\n                \"updated_at\": \"2021-12-16T16:15:51+05:30\",\r\n                \"landing_site\": \"/password\",\r\n                \"note\": null,\r\n                \"note_attributes\": [],\r\n                \"referring_site\": \"\",\r\n                \"shipping_lines\": [],\r\n                \"taxes_included\": false,\r\n                \"total_weight\": 1992,\r\n                \"currency\": \"USD\",\r\n                \"completed_at\": null,\r\n                \"closed_at\": null,\r\n                \"user_id\": null,\r\n                \"location_id\": null,\r\n                \"source_identifier\": null,\r\n                \"source_url\": null,\r\n                \"device_id\": null,\r\n                \"phone\": null,\r\n                \"customer_locale\": \"en\",\r\n                \"line_items\": [\r\n                    {\r\n                        \"applied_discounts\": [],\r\n                        \"discount_allocations\": [],\r\n                        \"key\": \"304822345da5e47b593b7be8b2f25e5e\",\r\n                        \"destination_location_id\": null,\r\n                        \"fulfillment_service\": \"manual\",\r\n                        \"gift_card\": false,\r\n                        \"grams\": 453,\r\n                        \"origin_location_id\": 3357384605914,\r\n                        \"presentment_title\": \"Long Sleeve Cotton Top\",\r\n                        \"presentment_variant_title\": \"xs\",\r\n                        \"product_id\": 7486418616538,\r\n                        \"properties\": [],\r\n                        \"quantity\": 3,\r\n                        \"requires_shipping\": true,\r\n                        \"sku\": \"\",\r\n                        \"tax_lines\": [],\r\n                        \"taxable\": true,\r\n                        \"title\": \"Long Sleeve Cotton Top\",\r\n                        \"variant_id\": 42186997203162,\r\n                        \"variant_title\": \"xs\",\r\n                        \"variant_price\": \"52.00\",\r\n                        \"vendor\": \"Liam Fashions\",\r\n                        \"user_id\": null,\r\n                        \"unit_price_measurement\": {\r\n                            \"measured_type\": null,\r\n                            \"quantity_value\": null,\r\n                            \"quantity_unit\": null,\r\n                            \"reference_value\": null,\r\n                            \"reference_unit\": null\r\n                        },\r\n                        \"rank\": null,\r\n                        \"compare_at_price\": null,\r\n                        \"line_price\": \"156.00\",\r\n                        \"price\": \"52.00\"\r\n                    },\r\n                    {\r\n                        \"applied_discounts\": [],\r\n                        \"discount_allocations\": [],\r\n                        \"key\": \"2e37fa0294365ffaccef20df5d2d2c2e\",\r\n                        \"destination_location_id\": null,\r\n                        \"fulfillment_service\": \"manual\",\r\n                        \"gift_card\": false,\r\n                        \"grams\": 211,\r\n                        \"origin_location_id\": 3357384605914,\r\n                        \"presentment_title\": \"Dark Denim Top\",\r\n                        \"presentment_variant_title\": \"xs\",\r\n                        \"product_id\": 7486418780378,\r\n                        \"properties\": [],\r\n                        \"quantity\": 3,\r\n                        \"requires_shipping\": true,\r\n                        \"sku\": \"\",\r\n                        \"tax_lines\": [],\r\n                        \"taxable\": true,\r\n                        \"title\": \"Dark Denim Top\",\r\n                        \"variant_id\": 42186998186202,\r\n                        \"variant_title\": \"xs\",\r\n                        \"variant_price\": \"66.00\",\r\n                        \"vendor\": \"Liam Fashions\",\r\n                        \"user_id\": null,\r\n                        \"unit_price_measurement\": {\r\n                            \"measured_type\": null,\r\n                            \"quantity_value\": null,\r\n                            \"quantity_unit\": null,\r\n                            \"reference_value\": null,\r\n                            \"reference_unit\": null\r\n                        },\r\n                        \"rank\": null,\r\n                        \"compare_at_price\": null,\r\n                        \"line_price\": \"198.00\",\r\n                        \"price\": \"66.00\"\r\n                    }\r\n                ],\r\n                \"name\": \"#32348160786650\",\r\n                \"source\": null,\r\n                \"abandoned_checkout_url\": \"https://testint15decs1.myshopify.com/61814341850/checkouts/1b110daef70e20bed9c10e620c37ae8d/recover?key=eac57b877fd3a22982a39d2944998ac0\",\r\n                \"discount_codes\": [],\r\n                \"tax_lines\": [],\r\n                \"source_name\": \"web\",\r\n                \"presentment_currency\": \"USD\",\r\n                \"buyer_accepts_sms_marketing\": false,\r\n                \"sms_marketing_phone\": null,\r\n                \"total_discounts\": \"0.00\",\r\n                \"total_line_items_price\": \"354.00\",\r\n                \"total_price\": \"354.00\",\r\n                \"total_tax\": \"0.00\",\r\n                \"subtotal_price\": \"354.00\",\r\n                \"total_duties\": null\r\n            }\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/api/transactions/{{transactionId}}",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"transactions",
+						"{{transactionId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "complete transaction",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"RandomNumber\",_.random(200000,900000));\r",
+							"console.log(pm.environment.get('domain'))\r",
+							"console.log(pm.environment.get('customerId'))\r",
+							"console.log(pm.environment.get('transactionId'))\r",
+							"console.log(pm.environment.get('token'))\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('complete transation', function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.environment.set(\"transactionId\", pm.response.json().transactionId)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AccountId",
+						"value": "{{customerId}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"processingState\" : \"Real\",\r\n    \"transactionId\": \"\",\r\n    \"customerTransactionId\": \"100000000011\",\r\n    \"transactionMode\": \"RealTime\",\r\n    \"customerId\": 4,\r\n    \"customerName\": \"testint14decs3.myshopify.com\",\r\n    \"integrationType\": \"Shopify\",\r\n    \"additionalDetails\": {\r\n        \"orderPlaced\": \"Yes\"\r\n    },\r\n    \"createdOn\": \"2021-06-16 09:27:47.000\",\r\n    \"eventRequest\": {\r\n        \"eventName\": \"Order\",\r\n        \"eventType\": \"Create\",\r\n        \"eventCreatedOn\": \"2021-06-16 09:27:49.000\",\r\n        \"eventReceivedOn\": \"2021-06-16 09:27:54.439\",\r\n        \"rawPayload\": {\r\n            \"topic\": \"ORDERS_CREATE\",\r\n            \"domain\": \"chargeback-dev-one.myshopify.com\",\r\n            \"payload\": {\r\n                \"id\": 3871956336823,\r\n                \"admin_graphql_api_id\": \"gid://shopify/Order/3871956336823\",\r\n                \"app_id\": 580111,\r\n                \"browser_ip\": \"4.15.132.30\",\r\n                \"buyer_accepts_marketing\": false,\r\n                \"cancel_reason\": null,\r\n                \"cancelled_at\": null,\r\n                \"cart_token\": \"e8c156616f2dbc45c9b76a14d37883d0XXX\",\r\n                \"checkout_id\": 21429936816311,\r\n                \"checkout_token\": \"a7e903712c4e0dc44a255bdcd68f3f34\",\r\n                \"client_details\": {\r\n                    \"accept_language\": \"en-US,en;q=0.9\",\r\n                    \"browser_height\": 896,\r\n                    \"browser_ip\": \"4.15.132.30\",\r\n                    \"browser_width\": 1903,\r\n                    \"session_hash\": null,\r\n                    \"user_agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36\"\r\n                },\r\n                \"closed_at\": null,\r\n                \"confirmed\": true,\r\n                \"contact_email\": \"lugene.luistro@vesta.io\",\r\n                \"created_at\": \"2021-06-16T02:27:47-07:00\",\r\n                \"currency\": \"USD\",\r\n                \"current_subtotal_price\": \"49.00\",\r\n                \"current_subtotal_price_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"49.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"49.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"current_total_discounts\": \"0.00\",\r\n                \"current_total_discounts_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"0.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"0.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"current_total_duties_set\": null,\r\n                \"current_total_price\": \"74.65\",\r\n                \"current_total_price_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"74.65\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"74.65\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"current_total_tax\": \"0.00\",\r\n                \"current_total_tax_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"0.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"0.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"customer_locale\": \"en\",\r\n                \"device_id\": null,\r\n                \"discount_codes\": [],\r\n                \"email\": \"lugene.luistro@vesta.io\",\r\n                \"financial_status\": \"authorized\",\r\n                \"fulfillment_status\": null,\r\n                \"gateway\": \"shopify_payments\",\r\n                \"landing_site\": \"/admin/online-store/themes?hmac=546ab99e079f62ad8ca2bacafa3965258b5ee02afb8014f43bd89e3f007bc7c2&host=Y2hhcmdlYmFjay1kZXYtb25lLm15c2hvcGlmeS5jb20vYWRtaW4&locale=en-US&new_design_language=true&session=3014c25d35f43f0e5283b1600ad1dc0ef6e000fbb1dfe516bb04bfad7b2ed1b0&shop=chargeback-dev-one.myshopify.com&timestamp=1623788626&_signed_params=host,locale,new_design_language,session,shop,timestamp&channel=true\",\r\n                \"landing_site_ref\": null,\r\n                \"location_id\": null,\r\n                \"name\": \"#{{RandomNumber}}\",\r\n                \"note\": null,\r\n                \"note_attributes\": [],\r\n                \"number\": 4,\r\n                \"order_number\": {{RandomNumber}},\r\n                \"order_status_url\": \"https://chargeback-dev-one.myshopify.com/57830998199/orders/772a761cc7b41a569ce1d1985fe52360/authenticate?key=6544ae2ad2640125c11c217cadee601a\",\r\n                \"original_total_duties_set\": null,\r\n                \"payment_gateway_names\": [\r\n                    \"shopify_payments\"\r\n                ],\r\n                \"phone\": \"8595064351\",\r\n                \"presentment_currency\": \"USD\",\r\n                \"processed_at\": \"2021-06-16T02:27:46-07:00\",\r\n                \"processing_method\": \"direct\",\r\n                \"reference\": null,\r\n                \"referring_site\": \"\",\r\n                \"source_identifier\": null,\r\n                \"source_name\": \"web\",\r\n                \"source_url\": null,\r\n                \"subtotal_price\": \"49.00\",\r\n                \"subtotal_price_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"49.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"49.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"tags\": \"\",\r\n                \"tax_lines\": [],\r\n                \"taxes_included\": false,\r\n                \"test\": true,\r\n                \"token\": \"772a761cc7b41a569ce1d1985fe52360\",\r\n                \"total_discounts\": \"0.00\",\r\n                \"total_discounts_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"0.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"0.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"total_line_items_price\": \"49.00\",\r\n                \"total_line_items_price_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"49.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"49.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"total_outstanding\": \"0.00\",\r\n                \"total_price\": \"74.65\",\r\n                \"total_price_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"74.65\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"74.65\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"total_price_usd\": \"74.65\",\r\n                \"total_shipping_price_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"25.65\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"25.65\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"total_tax\": \"0.00\",\r\n                \"total_tax_set\": {\r\n                    \"shop_money\": {\r\n                        \"amount\": \"0.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    },\r\n                    \"presentment_money\": {\r\n                        \"amount\": \"0.00\",\r\n                        \"currency_code\": \"USD\"\r\n                    }\r\n                },\r\n                \"total_tip_received\": \"0.00\",\r\n                \"total_weight\": 431,\r\n                \"updated_at\": \"2021-06-16T02:27:49-07:00\",\r\n                \"user_id\": null,\r\n                \"billing_address\": {\r\n                    \"first_name\": \"Lugene\",\r\n                    \"address1\": \"3655 Banadero\",\r\n                    \"phone\": \"8595064351\",\r\n                    \"city\": \"Calamba\",\r\n                    \"zip\": \"4027\",\r\n                    \"province\": \"Laguna\",\r\n                    \"country\": \"Philippines\",\r\n                    \"last_name\": \"Luistro\",\r\n                    \"address2\": \"\",\r\n                    \"company\": null,\r\n                    \"latitude\": 14.2187454,\r\n                    \"longitude\": 121.1638798,\r\n                    \"name\": \"Lugene Luistro\",\r\n                    \"country_code\": \"PH\",\r\n                    \"province_code\": \"PH-LAG\"\r\n                },\r\n                \"customer\": {\r\n                    \"id\": 5304045306039,\r\n                    \"email\": \"lugene.luistro@vesta.io\",\r\n                    \"accepts_marketing\": false,\r\n                    \"created_at\": \"2021-06-16T01:54:49-07:00\",\r\n                    \"updated_at\": \"2021-06-16T02:27:48-07:00\",\r\n                    \"first_name\": \"Lugene\",\r\n                    \"last_name\": \"Luistro\",\r\n                    \"orders_count\": 0,\r\n                    \"state\": \"disabled\",\r\n                    \"total_spent\": \"0.00\",\r\n                    \"last_order_id\": null,\r\n                    \"note\": null,\r\n                    \"verified_email\": true,\r\n                    \"multipass_identifier\": null,\r\n                    \"tax_exempt\": false,\r\n                    \"phone\": \"8595064351\",\r\n                    \"tags\": \"\",\r\n                    \"last_order_name\": null,\r\n                    \"currency\": \"USD\",\r\n                    \"accepts_marketing_updated_at\": \"2021-06-16T01:54:49-07:00\",\r\n                    \"marketing_opt_in_level\": null,\r\n                    \"tax_exemptions\": [],\r\n                    \"admin_graphql_api_id\": \"gid://shopify/Customer/5304045306039\",\r\n                    \"default_address\": {\r\n                        \"id\": 6486122922167,\r\n                        \"customer_id\": 5304045306039,\r\n                        \"first_name\": \"Lugene\",\r\n                        \"last_name\": \"Luistro\",\r\n                        \"company\": null,\r\n                        \"address1\": \"3655 Banadero\",\r\n                        \"address2\": \"\",\r\n                        \"city\": \"Calamba\",\r\n                        \"province\": \"Laguna\",\r\n                        \"country\": \"Philippines\",\r\n                        \"zip\": \"4027\",\r\n                        \"phone\": \"8595064351\",\r\n                        \"name\": \"Lugene Luistro\",\r\n                        \"province_code\": \"PH-LAG\",\r\n                        \"country_code\": \"PH\",\r\n                        \"country_name\": \"Philippines\",\r\n                        \"default\": true\r\n                    }\r\n                },\r\n                \"discount_applications\": [],\r\n                \"fulfillments\": [],\r\n                \"line_items\": [\r\n                    {\r\n                        \"id\": 10059339235511,\r\n                        \"admin_graphql_api_id\": \"gid://shopify/LineItem/10059339235511\",\r\n                        \"fulfillable_quantity\": 1,\r\n                        \"fulfillment_service\": \"manual\",\r\n                        \"fulfillment_status\": null,\r\n                        \"gift_card\": false,\r\n                        \"grams\": 431,\r\n                        \"name\": \"Chequered Red Shirt - medium\",\r\n                        \"origin_location\": {\r\n                            \"id\": 2969919357111,\r\n                            \"country_code\": \"US\",\r\n                            \"province_code\": \"OR\",\r\n                            \"name\": \"chargeback-dev-one\",\r\n                            \"address1\": \"5400 Meadows Road\",\r\n                            \"address2\": \"\",\r\n                            \"city\": \"Lake Oswego\",\r\n                            \"zip\": \"97035\"\r\n                        },\r\n                        \"price\": \"49.00\",\r\n                        \"price_set\": {\r\n                            \"shop_money\": {\r\n                                \"amount\": \"49.00\",\r\n                                \"currency_code\": \"USD\"\r\n                            },\r\n                            \"presentment_money\": {\r\n                                \"amount\": \"49.00\",\r\n                                \"currency_code\": \"USD\"\r\n                            }\r\n                        },\r\n                        \"product_exists\": true,\r\n                        \"product_id\": 6821253546167,\r\n                        \"properties\": [],\r\n                        \"quantity\": 1,\r\n                        \"requires_shipping\": true,\r\n                        \"sku\": \"\",\r\n                        \"taxable\": true,\r\n                        \"title\": \"Chequered Red Shirt\",\r\n                        \"total_discount\": \"0.00\",\r\n                        \"total_discount_set\": {\r\n                            \"shop_money\": {\r\n                                \"amount\": \"0.00\",\r\n                                \"currency_code\": \"USD\"\r\n                            },\r\n                            \"presentment_money\": {\r\n                                \"amount\": \"0.00\",\r\n                                \"currency_code\": \"USD\"\r\n                            }\r\n                        },\r\n                        \"variant_id\": 40034370486455,\r\n                        \"variant_inventory_management\": \"shopify\",\r\n                        \"variant_title\": \"medium\",\r\n                        \"vendor\": \"Liam Fashions\",\r\n                        \"tax_lines\": [],\r\n                        \"duties\": [],\r\n                        \"discount_allocations\": []\r\n                    }\r\n                ],\r\n                \"payment_details\": {\r\n                    \"credit_card_bin\": \"378282\",\r\n                    \"avs_result_code\": \"Y\",\r\n                    \"cvv_result_code\": \"M\",\r\n                    \"credit_card_number\": \"???? ???? ???? 0005\",\r\n                    \"credit_card_company\": \"American Express\"\r\n                },\r\n                \"refunds\": [],\r\n                \"shipping_address\": {\r\n                    \"first_name\": \"Lugene\",\r\n                    \"address1\": \"3655 Banadero\",\r\n                    \"phone\": \"8595064351\",\r\n                    \"city\": \"Calamba\",\r\n                    \"zip\": \"4027\",\r\n                    \"province\": \"Laguna\",\r\n                    \"country\": \"Philippines\",\r\n                    \"last_name\": \"Luistro\",\r\n                    \"address2\": \"\",\r\n                    \"company\": null,\r\n                    \"latitude\": 14.2187454,\r\n                    \"longitude\": 121.1638798,\r\n                    \"name\": \"Lugene Luistro\",\r\n                    \"country_code\": \"PH\",\r\n                    \"province_code\": \"PH-LAG\"\r\n                },\r\n                \"shipping_lines\": [\r\n                    {\r\n                        \"id\": 3298985705655,\r\n                        \"carrier_identifier\": null,\r\n                        \"code\": \"FirstClassPackageInternationalService\",\r\n                        \"delivery_category\": null,\r\n                        \"discounted_price\": \"25.65\",\r\n                        \"discounted_price_set\": {\r\n                            \"shop_money\": {\r\n                                \"amount\": \"25.65\",\r\n                                \"currency_code\": \"USD\"\r\n                            },\r\n                            \"presentment_money\": {\r\n                                \"amount\": \"25.65\",\r\n                                \"currency_code\": \"USD\"\r\n                            }\r\n                        },\r\n                        \"phone\": \"8595064351\",\r\n                        \"price\": \"25.65\",\r\n                        \"price_set\": {\r\n                            \"shop_money\": {\r\n                                \"amount\": \"25.65\",\r\n                                \"currency_code\": \"USD\"\r\n                            },\r\n                            \"presentment_money\": {\r\n                                \"amount\": \"25.65\",\r\n                                \"currency_code\": \"USD\"\r\n                            }\r\n                        },\r\n                        \"requested_fulfillment_service_id\": null,\r\n                        \"source\": \"usps\",\r\n                        \"title\": \"First Class Package International\",\r\n                        \"tax_lines\": [],\r\n                        \"discount_allocations\": []\r\n                    }\r\n                ]\r\n            }\r\n        }\r\n    },\r\n    \"modifiedOn\": \"2021-06-16 09:27:49.000\",\r\n    \"customerOrderId\": \"3871956336823\",\r\n    \"orderAmount\": {\r\n        \"amount\": 74.65,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"totalSaleAmount\": {\r\n        \"amount\": 0,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"totalBaseAmount\": {\r\n        \"amount\": 49,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"totalDiscountAmount\": {\r\n        \"amount\": 0,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"totalCouponAmount\": {\r\n        \"amount\": 0,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"totalTaxAmount\": {\r\n        \"amount\": 0,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"totalShippingAmount\": {\r\n        \"amount\": 25.65,\r\n        \"currencyCode\": \"USD\"\r\n    },\r\n    \"note\": null,\r\n    \"customerOrderStatusUrl\": \"https://chargeback-dev-one.myshopify.com/57830998199/orders/772a761cc7b41a569ce1d1985fe52360/authenticate?key=6544ae2ad2640125c11c217cadee601a\",\r\n    \"orderDetails\": [\r\n        {\r\n            \"customerOrderDetailId\": \"10059339235511\",\r\n            \"customerProduct\": {\r\n                \"productType\": \"Physical\",\r\n                \"customerProductId\": \"6821253546167\",\r\n                \"customerProductDescription\": \"Chequered Red Shirt\",\r\n                \"customerProductURL\": \"\",\r\n                \"productCategory\": \"\",\r\n                \"customerProductVariantId\": \"40034370486455\",\r\n                \"listPrice\": {\r\n                    \"amount\": 49.00,\r\n                    \"currencyCode\": \"USD\"\r\n                }\r\n            },\r\n            \"quantity\": 1.0,\r\n            \"salePrice\": {\r\n                \"amount\": 49.00,\r\n                \"currencyCode\": \"USD\"\r\n            },\r\n            \"taxable\": \"False\",\r\n            \"discounts\": [],\r\n            \"coupons\": [],\r\n            \"giftMessage\": null,\r\n            \"taxes\": [],\r\n            \"shippingAddress\": {\r\n                \"company\": \"\",\r\n                \"addressLine1\": \"3655 Banadero\",\r\n                \"addressLine2\": \"\",\r\n                \"unitNumber\": \"\",\r\n                \"buildingNumber\": \"\",\r\n                \"streetOrBlock\": \"\",\r\n                \"neighborhood\": \"\",\r\n                \"city\": \"Calamba\",\r\n                \"region\": \"Laguna\",\r\n                \"postalCode\": \"4027\",\r\n                \"countryCode\": \"PH\",\r\n                \"createdOn\": \"2021-06-16 09:27:54.438\",\r\n                \"firstName\": \"Lugene\",\r\n                \"lastName\": \"Luistro\"\r\n            },\r\n            \"additionalDetails\": {},\r\n            \"createdOn\": null,\r\n            \"updatedOn\": null,\r\n            \"createdBy\": null,\r\n            \"updatedBy\": null\r\n        }\r\n    ],\r\n    \"fulfillments\": [\r\n        {\r\n            \"orderDetailId\": 3298985705655,\r\n            \"fulfillmentType\": \"Digital\",\r\n            \"targetFulfillmentOn\": \"2021-06-16 09:27:54.439\",\r\n            \"shippingMethod\": \"FirstClassPackageInternationalService\",\r\n            \"shippingCarrier\": null,\r\n            \"shippingSource\": \"usps\",\r\n            \"shippingClass\": null,\r\n            \"targetShipDate\": null,\r\n            \"pickupLocation\": \"na\",\r\n            \"pickupDeliveryTime\": \"na\",\r\n            \"price\": 25.65,\r\n            \"shippingMode\": null,\r\n            \"transactionId\": null,\r\n            \"domainName\": null,\r\n            \"integrationType\": \"Shopify\"\r\n        }\r\n    ],\r\n    \"payments\": {\r\n        \"transactionId\": null,\r\n        \"customerTransactionId\": null,\r\n        \"transactionMode\": null,\r\n        \"customerId\": null,\r\n        \"customerName\": \"testint14decs3.myshopify.com\",\r\n        \"integrationType\": \"Shopify\",\r\n        \"additionalDetails\": null,\r\n        \"createdOn\": null,\r\n        \"eventRequest\": null,\r\n        \"modifiedOn\": null,\r\n        \"chargeAccountPaymentInstrument\": [\r\n            {\r\n                \"customerPaymentId\": \"3871956336823\",\r\n                \"paymentMethod\": \"ChargeAccount\",\r\n                \"customerPaymentInstrumentId\": \"3871956336823\",\r\n                \"billingAddress\": {\r\n                    \"company\": null,\r\n                    \"addressLine1\": \"3655 Banadero\",\r\n                    \"addressLine2\": \"\",\r\n                    \"unitNumber\": null,\r\n                    \"buildingNumber\": null,\r\n                    \"streetOrBlock\": null,\r\n                    \"neighborhood\": null,\r\n                    \"city\": \"Calamba\",\r\n                    \"region\": \"Laguna\",\r\n                    \"postalCode\": \"4027\",\r\n                    \"countryCode\": \"PH\",\r\n                    \"createdOn\": \"2021-06-16 09:27:54.439\",\r\n                    \"firstName\": \"Lugene\",\r\n                    \"lastName\": \"Luistro\"\r\n                },\r\n                \"paymentGatewayName\": \"shopify_payments\",\r\n                \"cardNumber\": \"???? ???? ???? 0005\",\r\n                \"cardBin\": \"378282\",\r\n                \"cardType\": null,\r\n                \"authResultCode\": \"\",\r\n                \"avsResultCode\": \"Y\",\r\n                \"cvvResultCode\": \"M\"\r\n            }\r\n        ],\r\n        \"checkAccountPaymentInstrument\": [],\r\n        \"paypalAccountPaymentInstrument\": []\r\n    },\r\n    \"consumerDevice\": {\r\n        \"ipV6Address\": null,\r\n        \"ipV4Address\": \"4.15.132.30\",\r\n        \"acceptLanguage\": \"en-US,en;q=0.9\",\r\n        \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36\",\r\n        \"sessionHash\": null,\r\n        \"browserWidth\": 1903,\r\n        \"browserHeight\": 896\r\n    },\r\n    \"consumer\": {\r\n        \"transactionId\": null,\r\n        \"customerTransactionId\": null,\r\n        \"transactionMode\": null,\r\n        \"customerId\": null,\r\n        \"customerName\": \"testint14decs3.myshopify.com\",\r\n        \"integrationType\": \"Shopify\",\r\n        \"additionalDetails\": null,\r\n        \"createdOn\": \"2021-06-16 08:54:49.000\",\r\n        \"eventRequest\": null,\r\n        \"modifiedOn\": \"2021-06-16 09:27:48.000\",\r\n        \"customerConsumerId\": \"5304045306039\",\r\n        \"firstName\": \"Lugene\",\r\n        \"lastName\": \"Luistro\",\r\n        \"dateOfBirth\": \"\",\r\n        \"email\": \"lugene.luistro@vesta.io\",\r\n        \"phoneNumber\": \"8595064351\",\r\n        \"addresses\": [\r\n            {\r\n                \"company\": null,\r\n                \"addressLine1\": \"3655 Banadero\",\r\n                \"addressLine2\": \"\",\r\n                \"unitNumber\": \"\",\r\n                \"buildingNumber\": \"\",\r\n                \"streetOrBlock\": \"\",\r\n                \"neighborhood\": \"\",\r\n                \"city\": \"Calamba\",\r\n                \"region\": \"Laguna\",\r\n                \"postalCode\": \"4027\",\r\n                \"countryCode\": \"PH\",\r\n                \"createdOn\": \"2021-06-16 08:54:49.000\"\r\n            }\r\n        ],\r\n        \"consumerLocale\": \"en\",\r\n        \"updatedBy\": null\r\n    },\r\n    \"updatedBy\": \"e828006a-ce33-4f13-a3ca-2ab9a1ccd414\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/api/transactions/complete/{{transactionId}}",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"transactions",
+						"complete",
+						"{{transactionId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
