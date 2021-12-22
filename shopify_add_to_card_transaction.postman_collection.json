@@ -12,7 +12,10 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.environment.set('token', pm.response.json().access_token);"
+							"pm.test('get access token', function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.environment.set('token', pm.response.json().access_token);   \r",
+							"})"
 						],
 						"type": "text/javascript"
 					}
@@ -116,14 +119,12 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test('initiate transaction for first customer', function() {\r",
+							"pm.test('Initiate transaction', function() {\r",
 							"    pm.response.to.have.status(200);\r",
+							"     pm.environment.set(\"transactionId\", pm.response.json().transactionId)\r",
 							"})\r",
 							"\r",
-							"\r",
-							"pm.test(\"get transactionID\", function() {\r",
-							"    pm.environment.set(\"transactionId\", pm.response.json().transactionId)\r",
-							"})"
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -178,6 +179,19 @@
 		},
 		{
 			"name": "add to cart data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('add to card data', function() {\r",
+							"    pm.response.to.have.status(200);   \r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
